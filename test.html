@@ -1,0 +1,107 @@
+# %%
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib as mpl
+from sklearn.impute import SimpleImputer
+
+
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_colwidth', None)
+
+df = pd.read_csv('vgsales_17.csv')
+df
+
+# %%
+df.info()
+
+# %%
+df.describe(include='all').T
+
+# %%
+df.describe().T
+
+# %%
+print("Общий размер -", df.shape, "Размер по вертикали -", df.shape[0], "Размер по горизонтали -", df.shape[1])
+
+# %%
+df.isnull().sum()
+
+# %%
+df.isnull().mean()*100
+
+# %%
+dfe = df.replace({'Publisher' : np.nan}, '2222')
+dfe.isnull().mean()*100
+
+# %%
+pd.set_option('display.max_rows', 20)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_colwidth', None)
+
+dff = pd.read_csv('vgsales_17.csv')
+
+
+simple = SimpleImputer(strategy='mean', missing_values=np.nan)
+simple = simple.fit(dff[['Year']])
+dff['Year'] = simple.transform(dff[['Year']])
+dff.isnull().mean()*100
+
+# %%
+sns.set_style('darkgrid')
+sns.countplot(y='Genre',data=df,palette='colorblind')
+plt.xlabel('Кол-во')
+plt.ylabel('Жанр')
+plt.show()
+
+# %%
+sns.set_style('whitegrid')
+sns.countplot(y='Platform',data=df,palette='colorblind')
+plt.xlabel("Кол-во")
+plt.ylabel("Девайсы")
+plt.show()
+
+# %%
+action_games = len(df[df['Genre']=='Action'])
+sports_games = len(df[df['Genre']=='Sports'])
+role_games = len(df[df['Genre']=='Role-Playing'])
+other_games = len(df) - action_games - sports_games - role_games
+print("КОл-во игр с жанром 'Экшн-Игры' = ", action_games)
+print("КОл-во игр с жанром 'Спорт' = ", sports_games)
+print("КОл-во игр с жанром 'Ролевые' = ", role_games)
+print("Кол-во остальных игр = ", other_games)
+
+# %%
+proc = df['Year'].value_counts(normalize=True)
+print(proc)
+x = df['Year'].unique()
+x = x[~np.isnan(x)]
+print(x)
+
+# %%
+df[df['Publisher'] == 'Electronic Arts']
+
+# %%
+copy = df.copy()
+copy.drop_duplicates()
+
+# %%
+df['Year'].hist()
+
+# %%
+df.head(10).T
+
+# %%
+df.tail(10)
+
+# %%
+dfa = df.drop(columns=['JP_Sales'])
+dfa.head(25)
+
+# %%
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_colwidth', None)
+df.sort_values(by='Rank', ascending=True)
